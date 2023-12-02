@@ -31,3 +31,4 @@ The native version is 105x faster
 
 The native version is 11x faster.
 Surprisingly, the tries version is slower than the simple one.
+Theoritically, I guess it can perform better if the size of the dictionary (the numbers "one" etc) is getting bigger.
