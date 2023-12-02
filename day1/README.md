@@ -2,11 +2,12 @@
 
 ## Algorithms
 ### part 1
-TODO
+No special algorithms.
 ### part 2 (simple)
-TODO
+The trick is to replace for example "one" by "one1one" and then filter all letters.
+By doing so, we don't erase information when looking for eights for in the string "oneight" for example
 ### part 2 (tries)
-TODO
+Custom implementation of a Trie data structure. Then, we loop over each character of a line until having our Trie find a matching word.
 
 ## Performances
 ### part 1
@@ -28,4 +29,5 @@ The native version is 105x faster
 - Running only with `./Part2JVM input.txt` (packaged with scala-cli) takes around 0.244s
 - Running the native version using scala native with `./Part2Native input.txt` takes around 0.005s
 
-The native version is 17x faster
+The native version is 11x faster.
+Surprisingly, the tries version is slower than the simple one.
