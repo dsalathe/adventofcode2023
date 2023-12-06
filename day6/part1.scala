@@ -1,5 +1,19 @@
 import io.Source
 
+/**
+ * EXPLANATION:
+    The key is to notice that holding the boat x seconds and releasing it y seconds yields x * y meters.
+    we know that:
+        x + y = n, where n is the total time
+        x * y = z, where z is the result in meters
+    By substitution:
+        n - x = y
+        x * (n - x) = -x² + nx = z
+    The rule is to have z > c, where c is the record distance.
+        -x² + nx > c
+        -x² + nx - c > 0
+    This becomes a second degree linear equation, with coefficients *a* = -1, *b* = n and *c* = -c
+ **/
 object Part1 {
 
     case class Record(time: Long, distance: Long)
