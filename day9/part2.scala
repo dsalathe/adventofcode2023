@@ -11,7 +11,7 @@ object Part2 {
         // Now the trick is that we can compute the sum A - B + C - D ... where letters are the first diff value of each stage
         val differentials = computeAllDiffs(numbers)
         differentials.map(_.head).zipWithIndex.map {case (v, i) =>
-            (if i%2 == 0 then 1 else -1) * v
+            (1 - 2 * (i%2)) * v // if i is even then it's 1 * v otherwise it's -1 * v
         }.sum
 
     def computeAllDiffs(numbers: Seq[Int]): Seq[Seq[Int]] =
