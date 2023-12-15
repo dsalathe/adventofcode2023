@@ -6,7 +6,8 @@ object Part2Fun {
   def main(args: Array[String]): Unit =
     val platform = parseInput(args(0))
     val (cycleLength, startingLength) = hareAndTortoise(platform)
-    val simulationNumber = ((N_CYCLES - startingLength) % cycleLength) + startingLength
+    // the final position is the starting path + the remaining path within the loop
+    val simulationNumber = startingLength + ((N_CYCLES - startingLength) % cycleLength)
     val res = (1 to simulationNumber).foldLeft(platform)((p, _) => p.spin())
     println(res.countWeight())
  
@@ -17,9 +18,9 @@ object Part2Fun {
       else
         run(hare.spin().spin(), tortoise.spin(), currentCount + 1)
 
-    val (firstEncounter, _) = run(start.spin().spin(), start.spin())
-    val (secondEncounter, mu) = run(firstEncounter, start)
-    val (_, lambda) = run(secondEncounter.spin(), secondEncounter, 1)
+    val (firstEncounter, _) = run(hare = start.spin().spin(), tortoise = start.spin())
+    val (secondEncounter, mu) = run(hare = firstEncounter, tortoise = start)
+    val (_, lambda) = run(hare = secondEncounter.spin(), tortoise = secondEncounter, currentCount = 1)
     (lambda, mu)
 
   def parseInput(s: String): Platform =
@@ -34,16 +35,17 @@ object Part2Fun {
     def spin(): Platform = Direction.values.foldLeft(this)((p, d) => p.tilt(d))
 
     def tilt(direction: Direction): Platform =
-      val transposedGrid = if direction == Direction.N || direction == Direction.S then grid.transpose else grid
+      import Direction.*
+      val transposedGrid = if Set(N, S).contains(direction) then grid.transpose else grid
       val newGrid = transposedGrid.map { line =>
-          val groups = line.mkString.split("#", -1)
+          val groups = line.mkString.split("#", -1) // "-1" allows to produce empty groups. It helps us adding "#" back at the end
           groups.map { group => 
-            val nRocks = group.count(_ == 'O')
-            val nSpaces = group.count(_ == '.')
-            if direction == Direction.E || direction == Direction.S then "." * nSpaces + "O" * nRocks else "O" * nRocks + "." * nSpaces
+            val rocks = "O" * group.count(_ == 'O')
+            val spaces = "." * group.count(_ == '.')
+            if Set(E, S).contains(direction) then spaces + rocks else rocks + spaces
           }.mkString("#").toVector
       }.toVector
-      val transposedNewGrid = if direction == Direction.N || direction == Direction.S then newGrid.transpose else newGrid
+      val transposedNewGrid = if Set(N, S).contains(direction) then newGrid.transpose else newGrid
       Platform(transposedNewGrid)
 
 }
