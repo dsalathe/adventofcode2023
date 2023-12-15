@@ -1,0 +1,4 @@
+- part2 JVM: 49.5s
+- part2 Native: 72.5s
+- part2 Functional JVM: 3s
+- part2 Functional Native: 4s
