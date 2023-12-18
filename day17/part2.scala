@@ -11,7 +11,11 @@ object Part2 {
     println(dijkstra(graph, Position(0, 0), Position(maxX, maxY)))
 
   enum Direction:
-    case N, E, S, W  
+    case N, E, S, W 
+
+    // Lazy to help for initialization
+    lazy val right = Direction.fromOrdinal((ordinal + 1) % 4)
+    lazy val left = Direction.fromOrdinal((ordinal + 3) % 4)
 
   case class Position(x: Int, y: Int):
     override def toString(): String = s"[$x, $y]"
@@ -21,13 +25,12 @@ object Part2 {
       case Direction.S => Position(x, y+1)
       case Direction.W => Position(x-1, y)
 
-  case class Node(position: Position, depth: Int, direction: Direction)
+  case class Node(position: Position, depth: Int, direction: Direction):
+    def move(newDirection: Direction): Node = Node(position.move(newDirection), if newDirection == direction then depth + 1 else 1, newDirection)
 
   def dijkstra(graph: Map[Position, Int], startPosition: Position, goalPosition: Position): Int =
-    import Direction.*
-
-    val startNode = Node(startPosition, 0, E)
-    val startNode2 = Node(startPosition, 0, S)
+    val startNode = Node(startPosition, 0, Direction.E)
+    val startNode2 = Node(startPosition, 0, Direction.S)
     val gScores = HMap[Node, Int]()
     gScores.put(startNode, 0)
     gScores.put(startNode2, 0)
@@ -40,23 +43,22 @@ object Part2 {
       if current.position == goalPosition then
         return gScores(current)
       else 
-        val neighbors: Set[Direction] = Set(
-          Option.when(current.depth >= 4)(Direction.fromOrdinal((current.direction.ordinal+1) % 4)), // Turn right
-          Option.when(current.depth >= 4)(Direction.fromOrdinal((current.direction.ordinal+3) % 4)), // Turn left
-          Option.when(current.depth < 10)(current.direction)).flatten // Move forward
         for 
-          neighborDirection <- neighbors
+          neighbor <- getNeighbors(current)
         do
-          val neighbor = current.position.move(neighborDirection)
-          val neighborDepth = if neighborDirection == current.direction then current.depth + 1 else 1
-          val neighborNode = Node(neighbor, neighborDepth, neighborDirection)
-          val tentativeGScore = gScores(current) + graph.getOrElse(neighbor, Int.MaxValue - gScores(current))
-          if tentativeGScore < gScores.getOrElse(neighborNode, Int.MaxValue) then
-            gScores.put(neighborNode, tentativeGScore)
-            pq.enqueue(neighborNode)
-
+          val tentativeGScore = gScores(current) + graph.getOrElse(neighbor.position, Int.MaxValue - gScores(current))
+          if tentativeGScore < gScores.getOrElse(neighbor, Int.MaxValue) then
+            gScores.put(neighbor, tentativeGScore)
+            pq.enqueue(neighbor)
     }
     -1
+
+  def getNeighbors(current: Node): Set[Node] =
+    val neighborDirections: Set[Direction] = Set(
+          Option.when(current.depth >= 4)(current.direction.right),
+          Option.when(current.depth >= 4)(current.direction.left),
+          Option.when(current.depth < 10)(current.direction)).flatten
+    neighborDirections.map(current.move)
   
   def parseInput(s: String): Map[Position, Int] =
     val digits = Source.fromFile(s).getLines().filter(!_.isBlank()).map(line => line.map(_.asDigit).toVector).toVector
