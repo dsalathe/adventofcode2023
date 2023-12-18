@@ -7,10 +7,10 @@ object Part2 {
     val maxX = grid.map(_._1.x).max
     val maxY = grid.map(_._1.y).max
     val countFunction = countEnergizedTiles(grid)
-    val fromLeft = (0 until maxY).map(y => countFunction(Position(0, y), Direction.E))
-    val fromTop = (0 until maxX).map(x => countFunction(Position(x, 0), Direction.S))
-    val fromRight = (0 until maxY).map(y => countFunction(Position(maxX-1, y), Direction.W))
-    val fromBottom = (0 until maxX).map(x => countFunction(Position(x, maxY-1), Direction.N))
+    val fromLeft = (0 to maxY).map(y => countFunction(Position(0, y), Direction.E))
+    val fromTop = (0 to maxX).map(x => countFunction(Position(x, 0), Direction.S))
+    val fromRight = (0 to maxY).map(y => countFunction(Position(maxX, y), Direction.W))
+    val fromBottom = (0 to maxX).map(x => countFunction(Position(x, maxY), Direction.N))
     println((fromLeft ++ fromTop ++ fromRight ++ fromBottom).max)
 
   enum Direction:

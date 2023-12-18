@@ -1,0 +1,1 @@
+Note: AStar was used first but part1 ran in 1.035s with AStar and 1.095s with Dijkstra. I therefore simplified the code back to a more simpler dijkstra. (Dijkstra == AStar with heuristic h = 0)

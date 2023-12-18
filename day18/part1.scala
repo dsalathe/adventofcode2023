@@ -11,7 +11,7 @@ object Part1 {
     def main(args: Array[String]): Unit = 
         val instructions = parseInput(args(0))
         val polygon = toPolygon(instructions)
-        println(getPerimeter(polygon) / 2 + shoelace(polygon) + 1)
+        println(shoelace(polygon) + getPerimeter(polygon) / 2 + 1)
 
     def toPolygon(instructions: Seq[Instruction]): Seq[Position] =
         instructions.foldLeft(List(Position(0L, 0L)))((polygon, instruction) =>
